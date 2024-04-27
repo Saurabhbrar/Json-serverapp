@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #products {
+            /* border: 1px solid green; */
+            width: 80%;
+            display: grid;
+            grid-template-columns: auto auto auto;
+            margin: auto;
+            gap: 30px;
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+            border-radius: 10px;
+
+
+        }
+
+        #products>div {
+            height: 350px;
+            width: 82%;
+            /* border: 1px solid rgb(244, 9, 9); */
+
+            border-radius: 25px;
+            margin: auto;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+
+        }
+
+        h2 {
+            font-size: 25px;
+            margin-left: 10px;
+            /* border: 1px solid black; */
+            font-family: Georgia, serif;
+        }
+
+        p {
+
+            font-size: 18px;
+
+        }
+
+        img {
+            height: 160px;
+            width: 200px;
+            /* border: 1px solid black; */
+            margin-left: 18%;
+            border-radius: 10px;
+
+        }
+
+        p {
+            /* border: 1px solid black; */
+            /* text-align: center; */
+            margin: 10px;
+        }
+
+        button {
+            border-radius: 5px;
+            border-color: azure;
+        }
+        #user{
+           /*  border: 1px solid red; */
+            text-align: right;
+            width: 90%;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="user">
+        <h3 id="name"></h3>
+        <button id="logout">Logout</button>
+    </div>
+
+    <div id="products">
+
+    </div>
+</body>
+
+</html>
+<script>
+    
+    let loginUser = JSON.parse(localStorage.getItem('loginUser'))
+    let nameinfo = document.getElementById('name')
+    nameinfo.textContent = `Welcome ${loginUser.name}`
+    /* console.log(loginUser) */
+    fetch('http://localhost:3000/products')
+        .then(res => res.json())
+        .then(data => {
+            //console.log(data[0])
+            data.forEach(element => {
+                let product = document.getElementById('products')
+                let productdiv = document.createElement('div')
+                product.append(productdiv)
+
+                let h2 = document.createElement('h2')
+                h2.innerHTML = element.title
+                /*  productdiv.append(h2) */
+
+                let image = document.createElement('img')
+                image.src = element.src
+                /* productdiv.append(image) */
+
+                let price = document.createElement('p')
+                price.innerHTML = "Price:" + " " + element.price
+                /*  productdiv.append(price) */
+
+                let rating = document.createElement('p')
+                rating.innerHTML = "Rating:" + " " + element.ratings
+
+                let addtocartbutton = document.createElement('button')
+                addtocartbutton.innerText = "Add To Cart"
+                addtocartbutton.addEventListener('click',function(){
+                   // console.log(element)
+                addfn(element)
+                })
+
+                let deletecartbutton = document.createElement('button')
+                deletecartbutton.innerText = "Delete from Cart"
+
+                productdiv.append(h2, image, price, rating, addtocartbutton, deletecartbutton)
+            })
+        })
+
+        let logout = document.getElementById('logout')
+        logout.addEventListener('click',function(){
+            localStorage.removeItem('loginUser')
+            alert('Logout Sucessfully')
+            window.location.href = "loginpage.html"
+        })
+
+       async function addfn(element){
+             let res = await fetch('http://localhost:3000/allUsersCart');
+             let data = await res.json(); 
+             console.log(data[loginUser.name])
+        }
+</script>
